@@ -1,11 +1,13 @@
 Package: ARWW
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Estimation of the parameters for the ARRW (Autoregressive AR(1) and Random Walk) model for time-series
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Amina Ghoul
+Maintainer: Amina Ghoul <amina.ghoul@outlook.com>
+Description: Functions to robustly estimate the parameters for the ARRW (Autoregressive AR(1) and Random Walk) 
+    model for time-series. The unknown parameters of our model are the 2 variances (one for AR, one for RW) and 
+    the AR(1) parameters. We also have plotting functions to better analyse our method. 
+    The robust estimation is performed via the MAD estimator.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
