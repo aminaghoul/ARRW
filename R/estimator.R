@@ -1,7 +1,4 @@
 
-devtools::install_github("aminaghoul/ARRW")
-library(ARRW)
-
 #' def
 #' @description Return the values of rPlus, rMinus, varphiPlus, varphiMinus, omega
 #' @param sdEta standard deviation in Random Walk
