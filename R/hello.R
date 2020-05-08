@@ -1,18 +1,11 @@
-# Hello, world!
-#
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
-#
-# You can learn more about package authoring with RStudio at:
-#
-#   http://r-pkgs.had.co.nz/
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Install Package:           'Ctrl + Shift + B'
-#   Check Package:             'Ctrl + Shift + E'
-#   Test Package:              'Ctrl + Shift + T'
 
-hello <- function() {
-  print("Hello, wo!")
+
+
+
+estimator <- function(sdEta = 0.4, sdNu = 0.5, phi = 0.6)
+{
+  omega <- (sdNu/sdEta)^2
+  u <- sqrt((1+phi)^2 + 4*omega)  rPlus <- (u + 1- phi)/(u - 1 + phi)
+  rMinus <- 1/rPlus  varphiPlus <- (2*(phi - 1)*(u + 1 + phi))/((u - phi + 1)*(u + phi - 1))
+  varphiMinus <- (2*(phi - 1)*(-u + 1 + phi))/((u - phi + 1)*(u + phi - 1))  return(list(rp = rPlus, rm = rMinus, phip = varphiPlus, phim = varphiMinus))
 }
