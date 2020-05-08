@@ -1,3 +1,5 @@
+
+devtools::install_github("aminaghoul/ARRW")
 library(ARRW)
 
 #' def
@@ -47,33 +49,33 @@ mu_hat <- function(val, n=500,y = datag)
 {
   muhat <- rep(0,n)
 
-  k <- esti$phip^2*esti$rp^(n - 1) - esti$phim^2*esti$rm^(n - 1)
-  k0 <- ki(esti,0)
-  omega <- esti$om
+  k <- val$phip^2*val$rp^(n - 1) - val$phim^2*val$rm^(n - 1)
+  k0 <- ki(val,0)
+  omega <- val$om
 
   for(i in 1:n)
-    {
+  {
     s1 <- 0
-    if(i >1)
+    if(i > 1)
     {
-      for(j in 1:(i-1))
+      for(j in 1:(i - 1))
       {
-        knj <- ki(esti, n - j)
+        knj <- ki(val, n - j)
         s1 <- s1 + y[j]*knj
       }
     }
     s2 <- 0
-    if(i<n)
+    if(i < n)
     {
-      for(j in (i+1):(n))
+      for(j in (i + 1):(n))
       {
-        kj1 <- ki(esti, n-j)
+        kj1 <- ki(val, j - 1)
         s2 <- s2 + y[j]*kj1
       }
     }
-    ki1 <-  ki(esti, i-1)
-    kni <- ki(esti, n-i)
-    estimateuri <- (ki1*s1+ki1*kni*y[i]+ki1*s2)/(omega*k0*k)
+    ki1 <-  ki(val, i - 1)
+    kni <- ki(val, n - i)
+    estimateuri <- (ki1*s1 + ki1*kni*y[i] + kni*s2)/(omega*k0*k)
     muhat[i] <- estimateuri
 
   }
