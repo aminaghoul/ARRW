@@ -1,3 +1,5 @@
+library(tidyverse)
+
 #' def
 #' @description Return the values of rPlus, rMinus, varphiPlus, varphiMinus, omega
 #' @param sdEta standard deviation in Random Walk
@@ -17,50 +19,34 @@ def <- function(sdEta = 0.4, sdNu = 0.5, phi = 0.6)
   return(list(rp = rPlus, rm = rMinus, phip = varphiPlus, phim = varphiMinus, om = omega))
 }
 
-#' ki
-#' @description Return the value of ki
-#' @param val a list of rPlus, rMinus, varphiPlus, varphiMinus, omega
-#' @param i an integer
-#' @return the value of ki
-
-ki <- function(val, i)
-{
-  phip <- esti$phip
-  phim <- esti$phim
-  rp <- esti$rp
-  rm <- esti$rm
-
-  res <- phip*rp^(i) - phim*rm^(i)
-  return(res)
-}
-
-
 #' var
 #' @description Return the values of the variance of the estimator of the signal
 #' @param sigma variance of epsilon
 #' @param n number of observations
 #' @return res a vector of the value of the variance
 
-var <- function(sigma,n)
+var <- function(val, sigma,n)
 {
-  val <- def(sdEta = sigma, sdNu = 0.5, phi = 0)
   k <- val$phip^2*val$rp^(n - 1) - val$phim^2*val$rm^(n - 1)
+  k0 <- val$phip - val$phim
   u <- sqrt(1 + 4*val$om)
 
   res <- rep(0,n)
   for(i in 1:n)
   {
-    terme1 <- cosh(1)*(4*i*sinh(n - 2*i + 1)*cosh(n) + sinh(2*n))
-    print(terme1)
-    terme2 <- 2*n*sinh(1)*(1 + cosh(2*i - 1))
-    terme3 <- 2*sinh(n)*cosh(2*i - n)
-    facteur <- ((4*sigma^2)/(sinh(1)*(u^4)*(k*ki(val,0))^2))
-    print(sinh(1)*(u^4))
-    res[i] <- facteur*(terme1 + terme2 + terme3)
+    terme1 <- sinh(1)*(n + n*cosh(2*i - 1)+2*i*sinh(n - 2*i + 1)*sinh(n))
+    terme2 <- sinh(n)*cosh(n - 2*i)
+    facteur <- (4*sigma^2)/(sinh(1)*(u^4)*(k*k0)^2)
+    res[i] <- facteur*(terme1 + terme2)
   }
-
+  res <- data.frame(1:n,res)
+  colnames(res) = c("i", "variance")
   return(res)
 
 }
-res <- var(6,10)
-plot(res)
+sigma <- 0.009
+val <- def(sdEta = sigma, sdNu = 0.9, phi = 0)
+res <- var(val, sigma,10)
+ggplot(res) + ggtitle("Variance de l'estimateur du modèle \n marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))
+
+
