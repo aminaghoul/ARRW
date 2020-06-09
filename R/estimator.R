@@ -22,18 +22,27 @@ def <- function(sdEta = 0.4, sdNu = 0.5, phi = 0.6)
 #' @description Return the value of ki
 #' @param val a list of rPlus, rMinus, varphiPlus, varphiMinus, omega
 #' @param i an integer
-#' @return the value of ki
+#' @return a list of the values of ki
 
-ki <- function(val, i)
+ki <- function(val, n)
 {
   phip <- esti$phip
   phim <- esti$phim
   rp <- esti$rp
   rm <- esti$rm
 
-  res <- phip*rp^(i) - phim*rm^(i)
-  return(res)
+  res <- rep(0, n + 1)
+  for(i in 1:(n + 1))
+  {
+    res[i] <- phip*rp^(i-1) - phim*rm^(i-1)
+  }
+
+  k <- phip^2*rp^(n - 1) - phim^2*rm^(n - 1)
+
+
+  return(list(ki = res, k = k))
 }
+
 
 #' mu_hat
 #' @description Estimator of mu

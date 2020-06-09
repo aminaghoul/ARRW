@@ -25,7 +25,7 @@ def <- function(sdEta = 0.4, sdNu = 0.5, phi = 0.6)
 #' @param n number of observations
 #' @return res a vector of the value of the variance
 
-var <- function(val, sigma,n)
+var <- function(val, sigma, n)
 {
   k <- val$phip^2*val$rp^(n - 1) - val$phim^2*val$rm^(n - 1)
   k0 <- val$phip - val$phim
@@ -34,9 +34,10 @@ var <- function(val, sigma,n)
   res <- rep(0,n)
   for(i in 1:n)
   {
-    terme1 <- sinh(1)*(n + n*cosh(2*i - 1)+2*i*sinh(n - 2*i + 1)*sinh(n))
-    terme2 <- sinh(n)*cosh(n - 2*i)
+    terme1 <- 2*sinh(1)*(n + n*cosh(2*i - 1)+2*i*sinh(n - 2*i + 1)*sinh(n))
+    terme2 <- 2*sinh(n)*cosh(n - 2*i) + cosh(1)*sinh(2*n)
     facteur <- (4*sigma^2)/(sinh(1)*(u^4)*(k*k0)^2)
+
     res[i] <- facteur*(terme1 + terme2)
   }
   res <- data.frame(1:n,res)
@@ -44,9 +45,10 @@ var <- function(val, sigma,n)
   return(res)
 
 }
-sigma <- 0.009
-val <- def(sdEta = sigma, sdNu = 0.9, phi = 0)
-res <- var(val, sigma,10)
+sigma <- 10.0
+val <- def(sdEta = sigma, sdNu = 0.5, phi = 0.0)
+val
+val$om
+res <- var(val, sigma,100)
 ggplot(res) + ggtitle("Variance de l'estimateur du modèle \n marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))
-
 
