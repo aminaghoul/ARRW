@@ -1,46 +1,3 @@
-#' def
-#' @description Return the values of rPlus, rMinus, varphiPlus, varphiMinus, omega
-#' @param sdEta standard deviation in Random Walk
-#' @param sdNu standard deviation in AR(1)
-#' @param phi AR(1) autocorrelation parameter
-#' @return a list of rPlus, rMinus, varphiPlus, varphiMinus, omega
-
-def <- function(sdEta = 0.4, sdNu = 0.5, phi = 0)
-{
-  omega <- (sdNu/sdEta)^2
-  u <- sqrt((1 + phi)^2 + 4*omega)
-  rPlus <- (u + 1- phi)/(u - 1 + phi)
-  rMinus <- 1/rPlus
-  varphiPlus <- (2*(phi - 1)*(u + 1 + phi))/((u - phi + 1)*(u + phi - 1))
-  varphiMinus <- (2*(phi - 1)*(- u + 1 + phi))/((u - phi + 1)*(u + phi - 1))
-
-  return(list(rp = rPlus, rm = rMinus, phip = varphiPlus, phim = varphiMinus, om = omega))
-}
-
-#' ki
-#' @description Return the value of ki
-#' @param val a list of rPlus, rMinus, varphiPlus, varphiMinus, omega
-#' @param i an integer
-#' @return a list of the values of ki
-
-ki <- function(val, n)
-{
-  phip <- esti$phip
-  phim <- esti$phim
-  rp <- esti$rp
-  rm <- esti$rm
-
-  res <- rep(0, n + 1)
-  for(i in 1:(n + 1))
-  {
-    res[i] <- phip*rp^(i-1) - phim*rm^(i-1)
-  }
-
-  k <- phip^2*rp^(n - 1) - phim^2*rm^(n - 1)
-
-
-  return(list(ki = res, k = k))
-}
 
 #' muhat
 #' @description muhat for phi = 0
@@ -85,13 +42,7 @@ muhat <- function(y, kis, omega)
   return(res)
 }
 
-val <- def(sdEta = 0.4, sdNu = 0.5, phi = 0)
-data <- c(12,45,12,88,78,0.2,13,14,68,59,48)
-n <- length(data)
-kis <- ki(val, n)
-omega <- val$om
-estim <- muhat(y = data, kis = kis, omega)
-plot(estim)
+
 
 #' cost
 #' @description Return the values of the cost function

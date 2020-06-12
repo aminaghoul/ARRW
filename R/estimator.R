@@ -26,10 +26,10 @@ def <- function(sdEta = 0.4, sdNu = 0.5, phi = 0.6)
 
 ki <- function(val, n)
 {
-  phip <- esti$phip
-  phim <- esti$phim
-  rp <- esti$rp
-  rm <- esti$rm
+  phip <- val$phip
+  phim <- val$phim
+  rp <- val$rp
+  rm <- val$rm
 
   res <- rep(0, n + 1)
   for(i in 1:(n + 1))
