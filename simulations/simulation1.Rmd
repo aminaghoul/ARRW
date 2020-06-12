@@ -1,6 +1,8 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  pdf_document: default
+  html_notebook: default
 ---
 
 ```{r setup, include=FALSE}
@@ -39,7 +41,7 @@ On prend comme paramètres :
 ```{r}
 n <- 500
 phi <- 0
-sdEta <- 0.4
+sdEta <- 0.04
 sdNu <- 0.5
 ```
 
@@ -72,17 +74,19 @@ ggplot(estimateur) + ggtitle("Estimateur du signal") + geom_point(aes(x = index 
 
 ## La variance de l'estimateur du signal
 
+### Pour n = 10
+
 ```{r}
-res <- var(val, sdEta, n )
+res <- var(val, sdEta, 10)
+res
 ggplot(res) + ggtitle("Variance de l'estimateur du modèle \n marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))
 ```
 
 
 ```{r}
-res1 <- var1(val, sdEta, n )
+res1 <- var1(val, sdEta, 20 )
+res1
 ggplot(res1) + ggtitle("Variance de l'estimateur du modèle \n marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))
-
-
 ```
 
 ## La fonction coût
