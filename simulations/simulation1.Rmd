@@ -41,8 +41,8 @@ On prend comme paramètres :
 ```{r}
 n <- 500
 phi <- 0
-sdEta <- 0.04
-sdNu <- 0.5
+sdEta <- 0.8
+sdNu <- 1
 ```
 
 
@@ -61,6 +61,7 @@ ggplot(signal) + ggtitle("Signal généré par DeCAFS") + geom_point(aes(x = i ,
 
 ```{r}
 val <- def(sdEta = sdEta, sdNu = sdNu, phi = phi)
+val
 kis <- ki(val, n)
 omega <- val$om
 estim <- muhat(y = Y$y, kis = kis, omega)
@@ -84,10 +85,17 @@ ggplot(res) + ggtitle("Variance de l'estimateur du modèle \n marche aléatoire 
 
 
 ```{r}
-res1 <- var1(val, sdEta, 20 )
-res1
-ggplot(res1) + ggtitle("Variance de l'estimateur du modèle \n marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))
+res1 <- var1(val, sdEta, 10)
+ggplot(res1) + ggtitle("Variance de l'estimateur du modèle marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))
 ```
+
+### Pour n = 500
+
+```{r}
+res1 <- var1(val, sdEta, 450)
+ggplot(res1) + ggtitle("Variance de l'estimateur du modèle marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))
+```
+
 
 ## La fonction coût
 

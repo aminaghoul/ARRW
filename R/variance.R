@@ -38,16 +38,17 @@ var1 <- function(val, sigma, n)
   rp <-val$rp
   print(rp)
   omega <- val$om
+  print(omega)
   u <- sqrt(1 + 4*val$om)
 
   res <- rep(0,n)
   for(i in 1:n)
   {
-    terme1 <- 4*(n + n*(rp^(2*i - 1) + rp^(1 - 2*i))/2)/((rp-rp^(-1))^(3)*(rp^n - rp^(-n))^2)
-    terme2 <- 2*(i*(rp^(n - 2*i + 1) - rp^(-n + 2*i - 1)))/((rp-rp^(-1))^(3)*(rp^n - rp^(-n)))
-    terme3 <- (rp^(n) + rp^(-n))*(rp+rp^(-1))/((rp-rp^(-1))^(4)*(rp^n - rp^(-n)))
-    terme4 <- 2*(rp^(n - 2*i) + rp^(2*i - n))/((rp-rp^(-1))^(4)*(rp^n - rp^(-n)))
-    facteur <- (sigma^2)/(omega^2)
+    terme1 <- 4*(n + n*(rp^(2*i - 1) + rp^(1 - 2*i))/2)/((rp^(2*n)*(1 - rp^(-2*n))^2))
+    terme2 <- 2*(i*(rp^(- 2*i + 1) - rp^(-2*n + 2*i - 1)))/(1 - rp^(-2*n))
+    terme3 <- (2*omega + 1)/u
+    terme4 <- (2*omega*(rp^(-2*i)+rp^(2*i-2*n)))/(u*(1-rp^(-2*n)))
+    facteur <- (omega*sigma^2)/(u^3)
 
     res[i] <- facteur*(terme1 + terme2 + terme3 + terme4)
   }
