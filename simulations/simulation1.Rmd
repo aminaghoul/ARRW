@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "Simulation - Modèle marche aléatoire plus bruit"
 output:
   pdf_document: default
   html_notebook: default
@@ -9,14 +9,14 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Première partie: Simulations pour phi = 0
+# Simulations pour phi = 0
 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 rm(list = ls())
 ```
 
 ## Installation du package 
-```{r}
+```{r,  message=FALSE, warning = FALSE}
 devtools::install_github("aminaghoul/ARRW")
 #devtools::install_github("gtromano/DeCAFS", force = TRUE)
 ```
@@ -25,16 +25,11 @@ devtools::install_github("aminaghoul/ARRW")
 ```{r, message=FALSE, warning = FALSE}
 library(DeCAFS)
 library(ARRW, quietly = TRUE)
-# Pour ggplot2 et la manipulation des dataframes
 library(tidyverse, quietly = TRUE)
-# Pour tracer plusieurs graphiques en même temps
-library(gridExtra, quietly = TRUE)
 
 ```
 
-
-
-## Générer des valeurs de y avec DeCAFS
+## Générer le signal avec DeCAFS
 
 On prend comme paramètres :
 
@@ -58,16 +53,20 @@ colnames(signal) <- c("i", "mu")
 ggplot(signal) + ggtitle("Signal généré par DeCAFS") + geom_point(aes(x = i ,y = mu))
 ```
 
+## Estimateur du signal théorique
+
+On définit les paramètres suivants :
 
 ```{r}
 val <- def(sdEta = sdEta, sdNu = sdNu, phi = phi)
-val
 kis <- ki(val, n)
 omega <- val$om
-estim <- muhat(y = Y$y, kis = kis, omega)
 ```
 
+On trace l'estimateur du signal 
+
 ```{r}
+estim <- muhat(y = Y$y, kis = kis, omega)
 estimateur <- data.frame(1:n,estim)
 colnames(estimateur) <- c("index", "muhat")
 ggplot(estimateur) + ggtitle("Estimateur du signal") + geom_point(aes(x = index ,y = muhat))
@@ -75,26 +74,9 @@ ggplot(estimateur) + ggtitle("Estimateur du signal") + geom_point(aes(x = index 
 
 ## La variance de l'estimateur du signal
 
-### Pour n = 10
 
 ```{r}
-res <- var(val, sdNu, 10)
-res
-ggplot(res) + ggtitle("Variance de l'estimateur du modèle \n marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))
-```
-
-
-```{r}
-res1 <- var1(val, sdNu, 10)
-maxi <- max(res1$variance)
-ggplot(res1) + ggtitle("Variance de l'estimateur du modèle marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))+ylim(0,maxi)
-```
-
-### Pour n = 500
-
-
-```{r}
-res1 <- var1(val, sdNu, 1000)
+res1 <- var1(val, sdNu, 500)
 maxi <- max(res1$variance)
 ggplot(res1,aes(x = i, y = variance) ) + ggtitle("Variance de l'estimateur du modèle marche aléatoire plus bruit") + ylim(0, maxi)+geom_line()+ geom_point(shape=3,size=1,color="darkblue")
 ```

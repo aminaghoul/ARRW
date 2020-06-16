@@ -67,16 +67,11 @@ var_emp <- function(n, nb_rep, sigma)
   return(varempi)
 }
 
-##################################################################################################################
-# A FINIR
-
-
-
 #' cost
 #' @description Return the values of the cost function
-#' @param ki float value of k(i)
-#' @param y observations data
-#' @return a float the value of the cost function for y
+#' @param y a vector of observations
+#' @param estim a vector of the estimator
+#' @return a vector of the value of the cost function for y
 
 cost <- function(y, estim)
 {
@@ -90,9 +85,11 @@ cost <- function(y, estim)
     cout[t] <- (y[t] - estim[t])^2 + (estim[t] - estim[t - 1])^2
   }
 
-  return(sum(cout))
+  return((cout))
 }
 
+##################################################################################################################
+# A FINIR
 
 #' OP
 #' @description Return the values of the changepoints
