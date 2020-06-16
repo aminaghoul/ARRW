@@ -1,12 +1,14 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Variance empirique simulation"
+output:
+  pdf_document: default
+  html_notebook: default
 ---
 
 On cherche à vérifier si la formule de la variance de l'estimateur du modèle marche aléatoire plus bruit est correcte, en la comparant à la variance trouvée par simulation.
 
 ## Installation du package 
-```{r}
+```{r, message=FALSE, warning = FALSE}
 devtools::install_github("aminaghoul/ARRW")
 #devtools::install_github("gtromano/DeCAFS", force = TRUE)
 ```
@@ -15,9 +17,7 @@ devtools::install_github("aminaghoul/ARRW")
 ```{r, message=FALSE, warning = FALSE}
 library(DeCAFS)
 library(ARRW, quietly = TRUE)
-# Pour ggplot2 et la manipulation des dataframes
 library(tidyverse, quietly = TRUE)
-# Pour tracer plusieurs graphiques en même temps
 library(gridExtra, quietly = TRUE)
 
 ```
@@ -55,6 +55,7 @@ ggplot(estimateur) + ggtitle("Estimateur du signal") + geom_point(aes(x = index 
 ## Variance empirique
 
 ```{r}
+res1 <- var1(val, sdNu, 100)
 par(mfrow=c(1,2))
 v=var_emp(100,200,0.8)
 plot(v)
