@@ -21,8 +21,8 @@ def <- function(sdEta = 0.4, sdNu = 0.5, phi = 0.6)
 #' ki
 #' @description Return the value of ki
 #' @param val a list of rPlus, rMinus, varphiPlus, varphiMinus, omega
-#' @param i an integer
-#' @return a list of the values of ki
+#' @param n an integer
+#' @return a list of the values of ki and the value of k
 
 ki <- function(val, n)
 {

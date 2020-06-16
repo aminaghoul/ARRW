@@ -1,0 +1,65 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+On cherche à vérifier si la formule de la variance de l'estimateur du modèle marche aléatoire plus bruit est correcte, en la comparant à la variance trouvée par simulation.
+
+## Installation du package 
+```{r}
+devtools::install_github("aminaghoul/ARRW")
+#devtools::install_github("gtromano/DeCAFS", force = TRUE)
+```
+
+## Chargement des packages
+```{r, message=FALSE, warning = FALSE}
+library(DeCAFS)
+library(ARRW, quietly = TRUE)
+# Pour ggplot2 et la manipulation des dataframes
+library(tidyverse, quietly = TRUE)
+# Pour tracer plusieurs graphiques en même temps
+library(gridExtra, quietly = TRUE)
+
+```
+
+## Générer des valeurs de y avec DeCAFS
+
+On prend comme paramètres :
+
+```{r}
+n <- 500
+phi <- 0
+sdEta <- 0.8
+sdNu <- 0.7
+```
+
+
+```{r}
+Y <- dataRWAR(n = n, poisParam = .01, meanGap = 15, phi = phi, sdEta = sdEta, sdNu = sdNu)
+y= Y$y
+```
+
+## Calculer les valeurs de $\hat\mu$
+
+
+```{r}
+val <- def(sdEta = sdEta, sdNu = sdNu, phi = phi)
+kis <- ki(val, n)
+omega <- val$om
+estim <- muhat(y = y, kis = kis, omega)
+estimateur <- data.frame(1:n,estim)
+colnames(estimateur) <- c("index", "muhat")
+ggplot(estimateur) + ggtitle("Estimateur du signal") + geom_point(aes(x = index ,y = muhat))
+```
+
+## Variance empirique
+
+```{r}
+par(mfrow=c(1,2))
+v=var_emp(10,10,0.7)
+plot(v)
+plot(res1)
+```
+
+
+

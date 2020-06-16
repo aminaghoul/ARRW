@@ -42,7 +42,7 @@ On prend comme paramètres :
 n <- 500
 phi <- 0
 sdEta <- 0.8
-sdNu <- 1
+sdNu <- 0.7
 ```
 
 
@@ -78,29 +78,32 @@ ggplot(estimateur) + ggtitle("Estimateur du signal") + geom_point(aes(x = index 
 ### Pour n = 10
 
 ```{r}
-res <- var(val, sdEta, 10)
+res <- var(val, sdNu, 10)
 res
 ggplot(res) + ggtitle("Variance de l'estimateur du modèle \n marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))
 ```
 
 
 ```{r}
-res1 <- var1(val, sdEta, 10)
-ggplot(res1) + ggtitle("Variance de l'estimateur du modèle marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))
+res1 <- var1(val, sdNu, 10)
+maxi <- max(res1$variance)
+ggplot(res1) + ggtitle("Variance de l'estimateur du modèle marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))+ylim(0,maxi)
 ```
 
 ### Pour n = 500
 
+
 ```{r}
-res1 <- var1(val, sdEta, 450)
-ggplot(res1) + ggtitle("Variance de l'estimateur du modèle marche aléatoire plus bruit") + geom_point(aes(x = i, y = variance))
+res1 <- var1(val, sdNu, 1000)
+maxi <- max(res1$variance)
+ggplot(res1,aes(x = i, y = variance) ) + ggtitle("Variance de l'estimateur du modèle marche aléatoire plus bruit") + ylim(0, maxi)+geom_line()+ geom_point(shape=3,size=1,color="darkblue")
 ```
 
 
 ## La fonction coût
 
 ```{r}
-cost <- cost(y = Y$y, estim)
+cost <- cost(y = Y$y, estim )
 ```
 
 ```{r}

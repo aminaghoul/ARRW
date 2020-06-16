@@ -1,29 +1,23 @@
-
 #' muhat
 #' @description muhat for phi = 0
-#' @param sdEta standard deviation in Random Walk
-#' @param sdNu standard deviation in AR(1)
-#' @param phi AR(1) autocorrelation parameter
-#' @return a list of rPlus, rMinus, varphiPlus, varphiMinus, omega
+#' @param y a vector of observations
+#' @param kis a list of k(i) and k
+#' @param omega a float
+#' @return a vector of the estimator of mu for phi=0
 
 muhat <- function(y, kis, omega)
 {
   n <- length(y)
-
   res <- rep(0, n)
-
   ki <- kis$ki
   k <- kis$k
 
   for(i in 1:n)
   {
     s1 <- 0
-    if(i > 1)
+    for(j in 1:i)
     {
-      for(j in 1:(i - 1))
-      {
-        s1 <- s1 + ki[j]*y[j]
-      }
+      s1 <- s1 + ki[j]*y[j]
     }
     if(i < n)
     {
@@ -33,14 +27,48 @@ muhat <- function(y, kis, omega)
         s2 <- s2 + ki[n - j + 1]*y[j]
       }
     }
-    print(ki[i])
 
-    res[i] <- (1/(omega*k*ki[1]))*(ki[n - i + 1]*s1 + ki[n - i + 1]*ki[i]*y[i] + ki[i]*s2)
+    res[i] <- (ki[n - i + 1]*s1 + ki[i]*s2)/(omega*k*ki[1])
 
   }
 
   return(res)
 }
+
+
+#' var_emp
+#' @description empirical variance of generated observations
+#' @param n an integer of the number of observations
+#' @param nb_rep an integer the number of repetitions of the simulation
+#' @param sigma a float the standard deviation of y
+#' @return a vector of the empirical variance
+var_emp <- function(n, nb_rep, sigma)
+{
+  val <- def(sdEta = 0.8^2, sdNu = sigma^2, phi = 0)
+  kisi <- ki(val, n)
+  omega <- val$om
+
+  vari <- matrix(0, nrow = nb_rep, ncol = n)
+
+  for(i in 1:nb_rep)
+  {
+    #generate y
+    Y <- dataRWAR(n = n, poisParam = .01, meanGap = 15, phi = 0, sdEta = 0.8^2, sdNu = sigma^2)
+    datai= Y$y
+    # calculate the estimator
+    estim <- muhat(y = datai, kis = kisi, omega)
+    vari[i,] <- estim
+  }
+  varempi <- rep(0, n)
+  for(j in 1:n)
+  {
+    varempi[j] <- sd(vari[,j]) ^2
+  }
+  return(varempi)
+}
+
+##################################################################################################################
+# A FINIR
 
 
 
@@ -65,12 +93,6 @@ cost <- function(y, estim)
   return(sum(cout))
 }
 
-estim
-y
-
-cout <- cost(data[1:2], estim)
-
-cout
 
 #' OP
 #' @description Return the values of the changepoints
@@ -103,6 +125,6 @@ OP <- function(cost = cout, beta = 0.5, y = data, muhat = estim)
 
   return(cp)
 }
-OP()
+
 
 

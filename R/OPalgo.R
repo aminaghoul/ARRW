@@ -15,29 +15,39 @@ muhat <- function(y, kis, omega)
   ki <- kis$ki
   k <- kis$k
 
-  for(i in 1:n)
+  s <- 0
+  for(j in 2:(n - 1))
+  {
+    s <- s + ki[n - j + 1]*y[j]
+  }
+  print(s)
+  res[1] <- (1/(omega*k))*(k[n]*y[1] + s + k[1]*y[n])
+
+  for(i in 2:(n - 1))
   {
     s1 <- 0
-    if(i > 1)
+    for(j in 1:(i - 1))
     {
-      for(j in 1:(i - 1))
-      {
         s1 <- s1 + ki[j]*y[j]
-      }
     }
-    if(i < n)
+    s2 <- 0
+    for(j in (i + 1):n)
     {
-      s2 <- 0
-      for(j in (i + 1):n)
-      {
-        s2 <- s2 + ki[n - j + 1]*y[j]
-      }
+      s2 <- s2 + ki[n - j + 1]*y[j]
     }
-    print(ki[i])
 
     res[i] <- (1/(omega*k*ki[1]))*(ki[n - i + 1]*s1 + ki[n - i + 1]*ki[i]*y[i] + ki[i]*s2)
 
   }
+  sn <- 0
+  for(j in 1:(i - 1))
+  {
+    sn <- sn + ki[j]*y[j]
+  }
+
+
+  res[n] <- (1/(omega*k))*(k[1]*y[1] + sn + k[n]*y[n])
+
 
   return(res)
 }
@@ -190,10 +200,6 @@ cost <- function(y)
   return(res)
 }
 
-data = c(12,45,12,88,78,0.2,13,14,68,59,48)
-res <- cost(y=data)
-
-res
 #' f
 #' @description Return the values of the function F(t) + cost + beta
 #' @param t
