@@ -40,19 +40,19 @@ var1 <- function(val, sigma, n)
   u <- sqrt(1 + 4*val$om)
 
   res <- rep(0,n)
+
+  terme1 <- (2*omega + 1)*(1+rp^(-2*n))
+  terme2 <- 2*u*(2*n*rp^(-2*n))/(1-rp^(-2*n))
+  facteur <- (omega^2*sigma^2)/((1-rp^(-2*n))*u^3)
   for(i in 1:n)
   {
-    terme1 <- (2*n*rp^(-2*n) + n*(rp^(2*i - 1-2*n) + rp^(1 - 2*i-2*n)))/(1-rp^(-2*n))
-    terme2 <- i*(rp^(- 2*i + 1) - rp^(-2*n + 2*i - 1))
-    terme3 <- (2*omega + 1)*(1+rp^(-2*n))
-    terme4 <- 2*omega*(rp^(-2*i)+rp^(2*i-2*n))
-    facteur <- (omega^2*sigma^2)/((1-rp^(-2*n))*u^3)
+    terme3 <- 2*u*n*(rp^(2*i - 1-2*n) + rp^(1 - 2*i-2*n))/(1-rp^(-2*n))
+    terme4 <- 2*u*i*(rp^(- 2*i + 1) - rp^(-2*n + 2*i - 1))
+    terme5 <- 2*omega*(rp^(-2*i)+rp^(2*i-2*n))
 
-    res[i] <- facteur*(2*u*(terme1 + terme2) + terme3 + terme4)
+    res[i] <- facteur*(terme1 + terme2+ terme3 + terme4 + terme5)
   }
-  res <- data.frame(1:n,res)
-  colnames(res) = c("i", "variance")
-  return(res)
 
+  return(res)
 }
 

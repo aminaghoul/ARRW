@@ -77,6 +77,8 @@ ggplot(estimateur) + ggtitle("Estimateur du signal") + geom_point(aes(x = index 
 
 ```{r}
 res1 <- var1(val, sdNu, 500)
+res1 <- data.frame(1:n, res1)
+colnames(res1) <- c("i", "variance")
 maxi <- max(res1$variance)
 ggplot(res1,aes(x = i, y = variance) ) + ggtitle("Variance de l'estimateur du modèle marche aléatoire plus bruit") + ylim(0, maxi)+geom_line()+ geom_point(shape=3,size=1,color="darkblue")
 ```
