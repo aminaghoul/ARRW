@@ -1,63 +1,8 @@
-
-#' muhat
-#' @description muhat for phi = 0
-#' @param y standard deviation in Random Walk
-#' @param kis standard deviation in AR(1)
-#' @param omega AR(1) autocorrelation parameter
-#' @return a list of rPlus, rMinus, varphiPlus, varphiMinus, omega
-
-muhat <- function(y, kis, omega)
-{
-  n <- length(y)
-
-  res <- rep(0, n)
-
-  ki <- kis$ki
-  k <- kis$k
-
-  s <- 0
-  for(j in 2:(n - 1))
-  {
-    s <- s + ki[n - j + 1]*y[j]
-  }
-  print(s)
-  res[1] <- (1/(omega*k))*(k[n]*y[1] + s + k[1]*y[n])
-
-  for(i in 2:(n - 1))
-  {
-    s1 <- 0
-    for(j in 1:(i - 1))
-    {
-        s1 <- s1 + ki[j]*y[j]
-    }
-    s2 <- 0
-    for(j in (i + 1):n)
-    {
-      s2 <- s2 + ki[n - j + 1]*y[j]
-    }
-
-    res[i] <- (1/(omega*k*ki[1]))*(ki[n - i + 1]*s1 + ki[n - i + 1]*ki[i]*y[i] + ki[i]*s2)
-
-  }
-  sn <- 0
-  for(j in 1:(i - 1))
-  {
-    sn <- sn + ki[j]*y[j]
-  }
-
-
-  res[n] <- (1/(omega*k))*(k[1]*y[1] + sn + k[n]*y[n])
-
-
-  return(res)
-}
-
-
 #' cost
 #' @description Return the values of the cost function
-#' @param ki float value of k(i)
-#' @param y observations data
-#' @return a float the value of the cost function for y
+#' @param y a vector of observations
+#' @param estim a vector of the estimator
+#' @return a vector of the value of the cost function for y
 
 cost <- function(y, estim)
 {
@@ -65,36 +10,17 @@ cost <- function(y, estim)
   cout <- rep(0, n)
 
   cout[1] <-  (y[1] - estim[1])^2
+
   for(t in 2:n)
   {
     cout[t] <- (y[t] - estim[t])^2 + (estim[t] - estim[t - 1])^2
   }
 
-  return(cout)
+  return((cout))
 }
 
-#' f
-#' @description Return the values of the function F(t) + cost + beta
-#' @param t
-#' @param tstar penalty constant
-#' @param F
-#' @param y observation data
-#' @param cost cost function
-#' @param beta penalty constant
-#' @return a list of res
-
-f <- function(t,tstar,F,cost,y, beta)
-{
-  res = rep(0,tstar)
-  for(i in 1:(tstar-1))
-  {
-    res[i] = F(t)+cost(ki, y[i+1:tstar])+beta
-  }
-
-  return(res)
-}
-
-
+##########################################################################################################################################
+# A FINIR
 
 #' OP
 #' @description Return the values of the changepoints
@@ -104,31 +30,37 @@ f <- function(t,tstar,F,cost,y, beta)
 #' @return a list of cp
 
 
-OP <- function(cost, beta = 0.5, y)
+OP <- function(cost = cout, beta = 0.5, y = data, muhat = estim)
 {
-  n = length(y)
-  F = rep(- beta,n + 1)
-  cp = rep(NA,n + 1)
+  n <- length(y)
+  f <- rep(- beta,n + 1)
+  cp <- rep(NA,n + 1)
 
-  for (taustar in 2:(n + 1)){
-    res = (f(t,tstar,F,cost,y, beta))
-    F(taustar) = min(res)
-    tauprim = which.min(res)
-    cp[taustar] = tauprim
+  for (taustar in 1:n)
+  {
+    tab <- rep(0, taustar)
+    for(tau in 2:(taustar -1))
+    {
+      tab[tau] <- f[tau] + cost(y[(tau):taustar], estim[(tau):taustar]) + beta
+    }
+    print(tab)
 
   }
+  f[taustar] <- min(tab)
+  tab[taustar] <- f[taustar] + cost(y[1:1], estim[1:1]) + beta
+  tauprim = which.min(tab)
+  cp[taustar] = tauprim
 
   return(cp)
 }
 
 
-#' cost
-#' @description Return the values of the cost function
-#' @param ki float value of k(i)
+#' cout
+#' @description Return the values of the cost function with the explicit formula
 #' @param y observations data
 #' @return a float the value of the cost function for y
 
-cost <- function(y)
+cout <- function(y)
 {
   n = length(y)
 
@@ -221,29 +153,4 @@ f <- function(t,tstar,F,cost,y, beta)
   return(res)
 }
 
-
-
-#' OP
-#' @description Return the values of the changepoints
-#' @param cost cost function of the model
-#' @param beta penalty constant
-#' @param y observations data
-#' @return a list of cp
-
-
-OP <- function(cost, beta = 0.5, y)
-{
-  n = length(y)
-  F = rep(- beta,n + 1)
-  cp = rep(NA,n + 1)
-
-  for (taustar in 2:(n + 1)){
-    res = (f(t,tstar,F,cost,y, beta))
-    F(taustar) = min(res)
-    tauprim = which.min(res)
-    cp[taustar] = tauprim
-
-  }
-
-  return(cp)
-}
+########################################################################################################################################################
