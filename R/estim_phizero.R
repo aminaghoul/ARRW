@@ -29,41 +29,45 @@ muhat <- function(y, kis, omega)
     }
 
     res[i] <- (ki[n - i + 1]*s1 + ki[i]*s2)/(omega*k*ki[1])
+  }
 
+  return(res)
+}
+
+#' muhat1
+#' @description muhat for phi = 0
+#' @param y a vector of observations
+#' @param kis a list of k(i) and k
+#' @param omega a float
+#' @return a vector of the estimator of mu for phi=0
+
+muhat1 <- function(y, u, rp)
+{
+  n <- length(y)
+  res <- rep(0, n)
+
+  facteur <- 1/(u*(1 - rp^(-2*n)))
+  for(i in 1:n)
+  {
+    s1 <- 0
+    for(j in 1:i)
+    {
+      s1 <- s1 + (rp^(j - 1/2) + rp^(1/2 - j))*y[j]
+    }
+    if(i < n)
+    {
+      s2 <- 0
+      for(j in (i + 1):n)
+      {
+        s2 <- s2 + (rp^(1/2 - j) + rp^(j - 2*n - 1/2))*y[j]
+      }
+    }
+
+    res[i] <- facteur*((rp^(1/2 - i) + rp^(i - 2*n - 1/2))*s1 + (rp^(i - 1/2) + rp^(1/2 - i))*s2)
   }
 
   return(res)
 }
 
 
-#' var_emp
-#' @description empirical variance of generated observations
-#' @param n an integer of the number of observations
-#' @param nb_rep an integer the number of repetitions of the simulation
-#' @param sigma a float the standard deviation of y
-#' @return a vector of the empirical variance
-var_emp <- function(n, nb_rep, sigma)
-{
-  val <- def(sdEta = 0.8^2, sdNu = sigma^2, phi = 0)
-  kisi <- ki(val, n)
-  omega <- val$om
-
-  vari <- matrix(0, nrow = nb_rep, ncol = n)
-
-  for(i in 1:nb_rep)
-  {
-    #generate y
-    Y <- dataRWAR(n = n, poisParam = .01, meanGap = 15, phi = 0, sdEta = 0.8^2, sdNu = sigma^2)
-    datai= Y$y
-    # calculate the estimator
-    estim <- muhat(y = datai, kis = kisi, omega)
-    vari[i,] <- estim
-  }
-  varempi <- rep(0, n)
-  for(j in 1:n)
-  {
-    varempi[j] <- sd(vari[,j]) ^2
-  }
-  return(varempi)
-}
 

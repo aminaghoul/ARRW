@@ -26,6 +26,7 @@ devtools::install_github("aminaghoul/ARRW")
 library(DeCAFS)
 library(ARRW, quietly = TRUE)
 library(tidyverse, quietly = TRUE)
+library("gridExtra")
 
 ```
 
@@ -34,7 +35,7 @@ library(tidyverse, quietly = TRUE)
 On prend comme paramètres :
 
 ```{r}
-n <- 500
+n <- 400
 phi <- 0
 sdEta <- 0.8
 sdNu <- 0.7
@@ -45,12 +46,11 @@ sdNu <- 0.7
 Y <- dataRWAR(n = n, poisParam = .01, meanGap = 15, phi = phi, sdEta = sdEta, sdNu = sdNu)
 ```
 
-On trace le signal généré.
 
 ```{r}
 signal <- data.frame(1:n,Y$signal)
 colnames(signal) <- c("i", "mu")
-ggplot(signal) + ggtitle("Signal généré par DeCAFS") + geom_point(aes(x = i ,y = mu))
+signal_decafs <- ggplot(signal) + ggtitle("Signal généré par DeCAFS") + geom_point(aes(x = i ,y = mu))
 ```
 
 ## Estimateur du signal théorique
@@ -61,22 +61,48 @@ On définit les paramètres suivants :
 val <- def(sdEta = sdEta, sdNu = sdNu, phi = phi)
 kis <- ki(val, n)
 omega <- val$om
+u <- val$u
+rp <- val$rp
 ```
 
-On trace l'estimateur du signal 
 
 ```{r}
 estim <- muhat(y = Y$y, kis = kis, omega)
 estimateur <- data.frame(1:n,estim)
-colnames(estimateur) <- c("index", "muhat")
-ggplot(estimateur) + ggtitle("Estimateur du signal") + geom_point(aes(x = index ,y = muhat))
+colnames(estimateur) <- c("i", "muhat")
+signal_calc <- ggplot(estimateur) + ggtitle("Estimateur du signal") + geom_point(aes(x = i ,y = muhat))
 ```
+
+```{r}
+estim <- muhat1(y = Y$y, u, rp)
+estimateur <- data.frame(1:n,estim)
+colnames(estimateur) <- c("i", "muhat")
+signal_calc <- ggplot(estimateur) + ggtitle("Estimateur du signal") + geom_point(aes(x = i ,y = muhat))
+```
+
+On a alors les deux signaux suivants : 
+
+```{r}
+grid.arrange(signal_calc, signal_decafs, ncol=2, nrow = 1)
+```
+
 
 ## La variance de l'estimateur du signal
 
+ - Formule de la variance avec les sinus et cosinus hyperboliques
 
 ```{r}
-res1 <- var1(val, sdNu, 500)
+res1 <- var_log(val, sdNu, n)
+res1 <- data.frame(1:n, res1)
+colnames(res1) <- c("i", "variance")
+maxi <- max(res1$variance)
+ggplot(res1,aes(x = i, y = variance) ) + ggtitle("Variance de l'estimateur du modèle marche aléatoire plus bruit") + ylim(0, maxi)+geom_line()+ geom_point(shape=3,size=1,color="darkblue")
+```
+
+ - Formule de la variance simplifiée sans les sinus et cosinus hyperboliques
+
+```{r}
+res1 <- var1(val, sdNu, n)
 res1 <- data.frame(1:n, res1)
 colnames(res1) <- c("i", "variance")
 maxi <- max(res1$variance)

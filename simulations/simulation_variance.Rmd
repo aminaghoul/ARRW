@@ -22,45 +22,39 @@ library(gridExtra, quietly = TRUE)
 
 ```
 
-## Générer des valeurs de y avec DeCAFS
-
-On prend comme paramètres :
-
-```{r}
-n <- 500
-phi <- 0
-sdEta <- 0.8
-sdNu <- 0.7
-```
-
-
-```{r}
-Y <- dataRWAR(n = n, poisParam = .01, meanGap = 15, phi = phi, sdEta = sdEta, sdNu = sdNu)
-y= Y$y
-```
-
-## Calculer les valeurs de $\hat\mu$
-
-
-```{r}
-val <- def(sdEta = sdEta, sdNu = sdNu, phi = phi)
-kis <- ki(val, n)
-omega <- val$om
-estim <- muhat(y = y, kis = kis, omega)
-estimateur <- data.frame(1:n,estim)
-colnames(estimateur) <- c("index", "muhat")
-ggplot(estimateur) + ggtitle("Estimateur du signal") + geom_point(aes(x = index ,y = muhat))
-```
 
 ## Variance empirique
 
+
 ```{r}
-res1 <- var1(val, sdNu, 100)
-par(mfrow=c(1,2))
-v=var_emp(100,200,0.8)
-plot(v)
-plot(res1)
+n <- 300
+nb_rep <- 100
+sigma <- 0.8
+sdEta = 0.9
+val <- def(sdEta, sdNu = sigma, phi = 0)
 ```
 
 
+```{r}
+res1 <- var1(val, sigma, n)
+res1 <- data.frame(1:n, res1)
+colnames(res1) <- c("i", "variance")
+maxi <- max(res1$variance)
+vartheo <- ggplot(res1,aes(x = i, y = variance) ) + ggtitle("Variance de l'estimateur théorique") + ylim(0, maxi)+geom_line()+ geom_point(shape=3,size=1,color="darkblue")
+```
+
+
+```{r}
+res2 <- var_emp(n, nb_rep=400, sigma, sdEta)
+res2 <- data.frame(1:n, res2)
+colnames(res2) <- c("i", "variance")
+maxi <- max(res2$variance)
+varsimu <- ggplot(res2,aes(x = i, y = variance) ) + ggtitle("Variance de l'estimateur simulée") + ylim(0, maxi)+geom_line()+ geom_point(shape=3,size=1,color="darkblue")
+```
+
+
+
+```{r}
+grid.arrange(vartheo, varsimu, ncol=2, nrow = 1)
+```
 
