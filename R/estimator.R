@@ -43,7 +43,8 @@ ki <- function(val, n)
   return(list(ki = res, k = k))
 }
 
-
+############################################################################################################################################################
+# A refaire
 #' mu_hat
 #' @description Estimator of mu
 #' @param val a list of rPlus, rMinus, varphiPlus, varphiMinus, omega
