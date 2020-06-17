@@ -1,5 +1,6 @@
 #' var
 #' @description Return the values of the variance of the estimator of the signal
+#' @param val a list of rPlus, rMinus, varphiPlus, varphiMinus, omega
 #' @param sigma variance of epsilon
 #' @param n number of observations
 #' @return res a vector of the value of the variance
@@ -29,6 +30,7 @@ vari <- function(val, sigma, n)
 
 #' var1
 #' @description Return the values of the variance of the estimator of the signal
+#' @param val a list of rPlus, rMinus, varphiPlus, varphiMinus, omega
 #' @param sigma variance of epsilon
 #' @param n number of observations
 #' @return res a vector of the value of the variance
